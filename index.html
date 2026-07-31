@@ -169,7 +169,6 @@ nav.stuck{border-bottom-color:var(--line-soft)}
 
 /* ---------- stats ---------- */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--line-soft)}
-.stat{background:var(--ink);padding:30px 22px}
 .stat-n{font-family:var(--mono);font-weight:600;font-size:clamp(1.5rem,3.4vw,2.125rem);color:var(--signal);letter-spacing:-.02em;line-height:1}
 .stat-l{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:11px;line-height:1.55}
 @media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
@@ -191,9 +190,6 @@ nav.stuck{border-bottom-color:var(--line-soft)}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin:17px 0}
 .tag{font-family:var(--mono);font-size:11px;color:var(--dim);background:var(--surface);border:1px solid var(--line-soft);border-radius:2px;padding:4px 10px}
 .proj-links{display:flex;gap:20px;flex-wrap:wrap}
-.proj-link{font-family:var(--mono);font-size:12.5px;color:var(--signal);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
-.proj-link:hover{border-bottom-color:var(--signal)}
-.proj-link[aria-disabled="true"]{color:var(--dim);pointer-events:none}
 
 /* ---------- feature importance ---------- */
 .fi{margin:24px 0;padding:20px;background:var(--surface);border:1px solid var(--line-soft);border-radius:4px;max-width:520px}
@@ -207,7 +203,6 @@ nav.stuck{border-bottom-color:var(--line-soft)}
 
 /* ---------- failures ---------- */
 .fails{display:grid;gap:2px;background:var(--line-soft)}
-.fail{background:var(--ink);padding:30px 0 30px 22px}
 .fail-head{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:11px}
 .fail-arrow{font-family:var(--mono);font-size:13px;color:var(--warn);white-space:nowrap}
 .fail-name{font-family:var(--display);font-weight:600;font-size:1.0625rem}
@@ -215,8 +210,6 @@ nav.stuck{border-bottom-color:var(--line-soft)}
 
 /* ---------- rows ---------- */
 .rows{border-top:1px solid var(--line-soft)}
-.row{display:grid;grid-template-columns:170px 1fr auto;gap:26px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--line-soft);text-decoration:none;transition:background .18s,padding-left .18s}
-.row:hover{background:var(--surface);padding-left:10px}
 .row-metric{font-family:var(--mono);font-weight:500;font-size:.9375rem;color:var(--signal)}
 .row-name{font-weight:500;font-size:.9375rem;display:block}
 .row-desc{color:var(--dim);font-size:.875rem;margin-top:3px;display:block}
@@ -228,8 +221,6 @@ nav.stuck{border-bottom-color:var(--line-soft)}
 .sg:first-child{border-top:none;padding-top:0}
 .sg-lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--dim);padding-top:4px}
 .chips{display:flex;flex-wrap:wrap;gap:7px}
-.chip{font-family:var(--mono);font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line-soft);border-radius:3px;padding:6px 12px;transition:border-color .2s,color .2s}
-.chip:hover{border-color:var(--signal);color:var(--signal)}
 
 /* ---------- contact ---------- */
 .contact-line{font-family:var(--display);font-weight:600;font-size:clamp(1.5rem,4.4vw,2.75rem);letter-spacing:-.028em;line-height:1.15;margin-bottom:34px;max-width:17ch}
@@ -257,12 +248,49 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
 .rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.22,.7,.35,1),transform .7s cubic-bezier(.22,.7,.35,1)}
 .rv.seen{opacity:1;transform:none}
 
+/* staggered reveal — children delay sequentially */
+.rv.seen.d1{transition-delay:.08s}
+.rv.seen.d2{transition-delay:.16s}
+.rv.seen.d3{transition-delay:.24s}
+.rv.seen.d4{transition-delay:.32s}
+.rv.seen.d5{transition-delay:.40s}
+
+/* project card hover lift + glow */
+.proj{display:grid;grid-template-columns:170px 1fr;gap:38px;padding:44px 0;border-top:1px solid var(--line-soft);transition:transform .35s cubic-bezier(.22,.7,.35,1),box-shadow .35s ease;border-radius:4px}
+.proj:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(79,209,197,.06)}
+
+/* stat box hover accent */
+.stat{background:var(--ink);padding:30px 22px;transition:background .25s ease,border-color .25s ease;position:relative}
+.stat::after{content:"";position:absolute;bottom:0;left:0;width:100%;height:2px;background:var(--signal);transform:scaleX(0);transform-origin:left;transition:transform .4s cubic-bezier(.22,.7,.35,1)}
+.stat:hover{background:var(--surface)}
+.stat:hover::after{transform:scaleX(1)}
+
+/* failure block slide-in from left */
+.fail{background:var(--ink);padding:30px 0 30px 22px;transition:background .2s ease,padding-left .3s ease}
+.fail:hover{background:var(--surface);padding-left:30px}
+
+/* chip stagger + hover pop */
+.chip{font-family:var(--mono);font-size:12.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line-soft);border-radius:3px;padding:6px 12px;transition:border-color .2s,color .2s,transform .2s ease,box-shadow .2s ease}
+.chip:hover{border-color:var(--signal);color:var(--signal);transform:translateY(-2px);box-shadow:0 4px 12px rgba(79,209,197,.1)}
+
+/* smooth underline draw on links */
+.proj-link{font-family:var(--mono);font-size:12.5px;color:var(--signal);text-decoration:none;position:relative}
+.proj-link::after{content:"";position:absolute;bottom:-2px;left:0;width:100%;height:1px;background:var(--signal);transform:scaleX(0);transform-origin:right;transition:transform .35s cubic-bezier(.22,.7,.35,1)}
+.proj-link:hover::after{transform:scaleX(1);transform-origin:left}
+.proj-link[aria-disabled="true"]{color:var(--dim);pointer-events:none}
+
+/* row hover enhancement */
+.row{display:grid;grid-template-columns:170px 1fr auto;gap:26px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--line-soft);text-decoration:none;transition:background .18s,padding-left .25s cubic-bezier(.22,.7,.35,1)}
+.row:hover{background:var(--surface);padding-left:14px}
+
 @media (prefers-reduced-motion:reduce){
   *{animation-duration:.01ms!important;transition-duration:.01ms!important}
   html{scroll-behavior:auto}
   .rv{opacity:1;transform:none}
   .marq-t{animation:none}
   .fi-fill{transform:scaleX(1)}
+  .proj:hover{transform:none;box-shadow:none}
+  .chip:hover{transform:none;box-shadow:none}
 }
 @media (max-width:760px){
   .hero{padding:120px 0 0}
@@ -304,20 +332,20 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
 
 <header class="wrap hero" id="top">
   <h1 class="hero-name rv">SURAJ<br>SAHOO</h1>
-  <p class="hero-line rv">I ship models, then document <em>where they break.</em></p>
+  <p class="hero-line rv" id="heroLine" data-original="I ship models, then document <em>where they break.</em>" data-alt="I debug assumptions, not just code — <em>that's where the signal is.</em>">I ship models, then document <em>where they break.</em></p>
   <p class="hero-sub rv">Self-taught in data science and machine learning. The numbers on this page are the ones that survived testing — not the ones that looked good first.</p>
   <div class="chans rv">
-    <a class="chan" href="https://github.com/surajgoeswithds">
+    <a class="chan" href="https://github.com/surajgoeswithds" target="_blank" rel="noopener">
       <span class="chan-arrow">↗</span>
       <span class="chan-name" data-txt="GitHub">GitHub</span>
       <span class="chan-handle">surajgoeswithds</span>
     </a>
-    <a class="chan" href="https://www.linkedin.com/in/suraj-sahoo-353b42277/">
+    <a class="chan" href="https://www.linkedin.com/in/suraj-sahoo-353b42277/" target="_blank" rel="noopener">
       <span class="chan-arrow">↗</span>
       <span class="chan-name" data-txt="LinkedIn">LinkedIn</span>
       <span class="chan-handle">suraj-sahoo</span>
     </a>
-    <a class="chan" href="https://www.kaggle.com/surajgotnochill">
+    <a class="chan" href="https://www.kaggle.com/surajgotnochill" target="_blank" rel="noopener">
       <span class="chan-arrow">↗</span>
       <span class="chan-name" data-txt="Kaggle">Kaggle</span>
       <span class="chan-handle">surajgotnochill</span>
@@ -383,8 +411,8 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
       </div>
       <div class="tags"><span class="tag">scikit-learn</span><span class="tag">RandomForest</span><span class="tag">Flask</span><span class="tag">pandas</span><span class="tag">Render</span></div>
       <div class="proj-links">
-        <a class="proj-link" href="https://github.com/navyaXdev/Safora">Repository →</a>
-        <a class="proj-link" href="https://github.com/navyaXdev/Safora/releases">Download extension →</a>
+        <a class="proj-link" href="https://github.com/navyaXdev/Safora" target="_blank" rel="noopener">Repository →</a>
+        <a class="proj-link" href="https://github.com/navyaXdev/Safora/releases" target="_blank" rel="noopener">Download extension →</a>
       </div>
     </div>
   </article>
@@ -407,8 +435,8 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
       </div>
       <div class="tags"><span class="tag">Flask</span><span class="tag">SQLite</span><span class="tag">Gunicorn</span><span class="tag">REST</span><span class="tag">Render</span></div>
       <div class="proj-links">
-        <a class="proj-link" href="https://github.com/navyaXdev/ChatX">Repository →</a>
-        <a class="proj-link" href="https://chat-x-ruddy.vercel.app">Live app →</a>
+        <a class="proj-link" href="https://github.com/navyaXdev/ChatX" target="_blank" rel="noopener">Repository →</a>
+        <a class="proj-link" href="https://chat-x-ruddy.vercel.app" target="_blank" rel="noopener">Live app →</a>
       </div>
     </div>
   </article>
@@ -430,7 +458,7 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
         <p>Chunks are raw transcript segments, so short fragments like <span class="m">"using sql"</span> can outscore denser, more useful ones on a keyword match. A neighbouring-chunk window softens it at retrieval time; the real fix is sentence-level chunking, deferred for the demo build. Generation is also deliberately <em>blended</em> — grounded in the transcript for topic and timestamp, but allowed to supply clean SQL syntax the spoken audio states messily.</p>
       </div>
       <div class="tags"><span class="tag">faster-whisper</span><span class="tag">Ollama</span><span class="tag">bge-m3</span><span class="tag">Llama 3.2</span><span class="tag">NumPy</span><span class="tag">Streamlit</span></div>
-      <div class="proj-links"><a class="proj-link" href="https://github.com/surajgoeswithds/sql-rag-assistant">Repository →</a></div>
+      <div class="proj-links"><a class="proj-link" href="https://github.com/surajgoeswithds/sql-rag-assistant" target="_blank" rel="noopener">Repository →</a></div>
     </div>
   </article>
 
@@ -450,7 +478,7 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
         <p>Every categorical feature was dropped to avoid encoding work — including Neighborhood, usually a top-five predictor here. The score has a hard ceiling until they come back in through a ColumnTransformer.</p>
       </div>
       <div class="tags"><span class="tag">scikit-learn</span><span class="tag">pandas</span><span class="tag">seaborn</span></div>
-      <div class="proj-links"><a class="proj-link" href="https://github.com/surajgoeswithds/kaggle-machine-learning">Repository →</a></div>
+      <div class="proj-links"><a class="proj-link" href="https://github.com/surajgoeswithds/kaggle-machine-learning" target="_blank" rel="noopener">Repository →</a></div>
     </div>
   </article>
 </section>
@@ -490,37 +518,37 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
   <p class="section-note rv">The work that put the stack under my hands.</p>
 
   <div class="rows rv">
-    <a class="row" href="https://github.com/surajgoeswithds/deep-learning-neural-networks">
+    <a class="row" href="https://github.com/surajgoeswithds/deep-learning-neural-networks" target="_blank" rel="noopener">
       <span class="row-metric">97.68%</span>
       <span><span class="row-name">MNIST neural network</span><span class="row-desc">TensorFlow/Keras — dense network, softmax over 10 classes, 5 epochs</span></span>
       <span class="row-arrow">→</span>
     </a>
-    <a class="row" href="https://github.com/surajgoeswithds/ml-foundations-sklearn">
+    <a class="row" href="https://github.com/surajgoeswithds/ml-foundations-sklearn" target="_blank" rel="noopener">
       <span class="row-metric">Full pipeline</span>
       <span><span class="row-name">Housing price prediction pipeline</span><span class="row-desc">ColumnTransformer, stratified split, cross-validation, Joblib persistence, train-once/serve-many inference</span></span>
       <span class="row-arrow">→</span>
     </a>
-    <a class="row" href="https://github.com/surajgoeswithds/IPL-EDA-2007-2024">
+    <a class="row" href="https://github.com/surajgoeswithds/IPL-EDA-2007-2024" target="_blank" rel="noopener">
       <span class="row-metric">17 seasons</span>
       <span><span class="row-name">IPL exploratory analysis</span><span class="row-desc">Toss impact, venue advantage and team dominance across 2007–2024</span></span>
       <span class="row-arrow">→</span>
     </a>
-    <a class="row" href="https://github.com/surajgoeswithds/sql-python-employee-analysis">
+    <a class="row" href="https://github.com/surajgoeswithds/sql-python-employee-analysis" target="_blank" rel="noopener">
       <span class="row-metric">MySQL + pandas</span>
       <span><span class="row-name">Employee database analysis</span><span class="row-desc">Live SQL queries into DataFrames, credentials handled through environment variables</span></span>
       <span class="row-arrow">→</span>
     </a>
-    <a class="row" href="https://github.com/surajgoeswithds/Books-web-scraper">
+    <a class="row" href="https://github.com/surajgoeswithds/Books-web-scraper" target="_blank" rel="noopener">
       <span class="row-metric">1,000 rows</span>
       <span><span class="row-name">Books web scraper</span><span class="row-desc">Requests + BeautifulSoup across 50 paginated pages into a structured CSV</span></span>
       <span class="row-arrow">→</span>
     </a>
-    <a class="row" href="https://github.com/surajgoeswithds/probability-statistics-for-ds">
+    <a class="row" href="https://github.com/surajgoeswithds/probability-statistics-for-ds" target="_blank" rel="noopener">
       <span class="row-metric">CLT verified</span>
       <span><span class="row-name">Probability and statistics</span><span class="row-desc">Distributions, plus a simulation showing sample means go normal from a skewed population</span></span>
       <span class="row-arrow">→</span>
     </a>
-    <a class="row" href="https://github.com/surajgoeswithds/kaggle-machine-learning">
+    <a class="row" href="https://github.com/surajgoeswithds/kaggle-machine-learning" target="_blank" rel="noopener">
       <span class="row-metric">0.73444</span>
       <span><span class="row-name">Titanic classification</span><span class="row-desc">First Kaggle submission — RandomForestClassifier</span></span>
       <span class="row-arrow">→</span>
@@ -561,14 +589,14 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
     <div class="api-bar">
       <span class="api-verb">GET</span>
       <span class="api-path">/contact</span>
-      <span class="api-status"><i></i>200 OK</span>
+      
       <button id="copyBtn" class="api-copy" type="button">Copy email</button>
     </div>
     <pre class="api-body"><code><span class="p">{</span>
   <span class="k">"email"</span><span class="p">:</span>          <a class="v" href="mailto:surajsahoo20007@gmail.com">"surajsahoo20007@gmail.com"</a><span class="p">,</span>
-  <span class="k">"github"</span><span class="p">:</span>         <a class="v" href="https://github.com/surajgoeswithds">"surajgoeswithds"</a><span class="p">,</span>
-  <span class="k">"linkedin"</span><span class="p">:</span>       <a class="v" href="https://www.linkedin.com/in/suraj-sahoo-353b42277/">"suraj-sahoo"</a><span class="p">,</span>
-  <span class="k">"kaggle"</span><span class="p">:</span>         <a class="v" href="https://www.kaggle.com/surajgotnochill">"surajgotnochill"</a><span class="p">,</span>
+  <span class="k">"github"</span><span class="p">:</span>         <a class="v" href="https://github.com/surajgoeswithds" target="_blank" rel="noopener">"surajgoeswithds"</a><span class="p">,</span>
+  <span class="k">"linkedin"</span><span class="p">:</span>       <a class="v" href="https://www.linkedin.com/in/suraj-sahoo-353b42277/" target="_blank" rel="noopener">"suraj-sahoo"</a><span class="p">,</span>
+  <span class="k">"kaggle"</span><span class="p">:</span>         <a class="v" href="https://www.kaggle.com/surajgotnochill" target="_blank" rel="noopener">"surajgotnochill"</a><span class="p">,</span>
   <span class="k">"open_to"</span><span class="p">:</span>        <span class="p">[</span><span class="s">"internships"</span><span class="p">,</span> <span class="s">"collaboration"</span><span class="p">,</span> <span class="s">"open source"</span><span class="p">],</span>
   <span class="k">"timezone"</span><span class="p">:</span>       <span class="s">"Asia/Kolkata"</span> <span class="c">// UTC+5:30</span>
 <span class="p">}</span></code></pre>
@@ -638,6 +666,28 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
     es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('seen'); io.unobserve(e.target);} });
   },{threshold:.1,rootMargin:'0px 0px -40px 0px'});
   document.querySelectorAll('.rv,.fi').forEach(function(el){io.observe(el);});
+
+  /* assign stagger delay classes to grouped siblings */
+  document.querySelectorAll('.fails,.stats').forEach(function(group){
+    var kids = group.querySelectorAll('.rv');
+    kids.forEach(function(el,i){ if(i<6) el.classList.add('d'+Math.min(i,5)); });
+  });
+  document.querySelectorAll('.chips').forEach(function(group){
+    var kids = group.querySelectorAll('.chip');
+    kids.forEach(function(el,i){
+      el.style.opacity='0';el.style.transform='translateY(8px)';
+      el.style.transition='opacity .4s ease '+(i*0.04)+'s, transform .4s ease '+(i*0.04)+'s, border-color .2s, color .2s';
+    });
+    var cio = new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          group.querySelectorAll('.chip').forEach(function(c){c.style.opacity='1';c.style.transform='none';});
+          cio.unobserve(e.target);
+        }
+      });
+    },{threshold:.2});
+    cio.observe(group);
+  });
 
   var counted=false;
   function startCounters(){
@@ -733,6 +783,30 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
     });
   },{rootMargin:'-45% 0px -50% 0px'});
   secs.forEach(function(s){io3.observe(s);});
+
+  /* hero line text swap on hover */
+  var heroLine = document.getElementById('heroLine');
+  if(heroLine && !reduce){
+    var orig = heroLine.dataset.original;
+    var alt = heroLine.dataset.alt;
+    var swapping = false;
+    function swapText(html){
+      if(swapping) return;
+      swapping = true;
+      heroLine.style.transition = 'opacity .25s ease, transform .25s ease';
+      heroLine.style.opacity = '0';
+      heroLine.style.transform = 'translateY(6px)';
+      setTimeout(function(){
+        heroLine.innerHTML = html;
+        heroLine.style.opacity = '1';
+        heroLine.style.transform = 'none';
+        setTimeout(function(){ swapping = false; }, 300);
+      }, 260);
+    }
+    heroLine.addEventListener('mouseenter', function(){ swapText(alt); });
+    heroLine.addEventListener('mouseleave', function(){ swapText(orig); });
+  }
+
 })();
 </script>
 </body>
