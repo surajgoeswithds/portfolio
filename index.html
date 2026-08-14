@@ -357,7 +357,7 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
     </a>
   </div>
   <div class="hero-meta rv">
-    <div><p class="hm-lab">Focus</p><p class="hm-val">ML engineering · applied AI</p></div>
+    <div><p class="hm-lab">Focus</p><p class="hm-val">ML engineering · applied AI · cybersecurity</p></div>
     <div><p class="hm-lab">Local time</p><p class="hm-val" id="clock">--:--:-- IST</p></div>
     <div><p class="hm-lab">Status</p><p class="hm-val">Open to internships</p></div>
   </div>
@@ -372,13 +372,14 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
     <div class="stat"><div class="stat-n" data-to="476" data-suffix="K">0</div><p class="stat-l">URLs labelled<br>and cleaned</p></div>
     <div class="stat"><div class="stat-n" data-to="11">0</div><p class="stat-l">Lexical features<br>engineered</p></div>
     <div class="stat"><div class="stat-n" data-to="5">0</div><p class="stat-l">Retrains to kill<br>data leakage</p></div>
-    <div class="stat"><div class="stat-n" data-to="1000" data-comma="1">0</div><p class="stat-l">Books scraped<br>across 50 pages</p></div>
+    <div class="stat"><div class="stat-n" data-to="24">0</div><p class="stat-l">Attack requests<br>honeypot-contained</p></div>
   </div>
 </section>
 
 <section class="wrap section" id="work">
   <p class="eyebrow rv">Selected work</p>
   <h2 class="section-title rv">Four projects worth reading closely</h2>
+  <!-- Ghost Guard replaces House Prices regression baseline -->
   <p class="section-note rv">Each leads with the number that matters, and the caveat that comes with it.</p>
 
   <article class="proj rv">
@@ -464,21 +465,34 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
 
   <article class="proj rv">
     <div>
-      <div class="metric-val">0.15366</div>
-      <div class="metric-lab">RMSLE<br>Kaggle public</div>
+      <div class="metric-val">1%</div>
+      <div class="metric-lab">False-positive rate<br>200-sample test</div>
     </div>
     <div>
       <div class="proj-head">
-        <h3 class="proj-name">House Prices — regression baseline</h3>
-        <span class="proj-role">Kaggle</span>
+        <h3 class="proj-name">Ghost Guard — adaptive API defense</h3>
+        <span class="proj-role">Role: ML + backend</span>
       </div>
-      <p class="proj-body">A deliberately minimal baseline on the Ames housing set: numeric features only, median imputation, RandomForest regressor. Correlation analysis surfaced that <span class="m">GarageCars</span> and <span class="m">GarageArea</span> are near-duplicates, both proxying house size already captured by <span class="m">OverallQual</span>.</p>
+      <p class="proj-body">A behavior-based API defense system that detects unknown attacks <strong>without predefined signatures</strong>. I built the entire Python/Flask backend: an <strong>Isolation Forest</strong> trained exclusively on synthetic normal traffic learns what baseline behavior looks like — request rate, payload size, endpoint pattern, HTTP method. Any request that deviates from that learned baseline gets silently routed to a parallel <strong>honeypot layer</strong> of fake endpoints (<span class="m">/admin</span>, <span class="m">/admin/users</span>, <span class="m">/login</span>) that return believable but fake data, while the attacker's full action sequence is logged for analysis.</p>
+      <p class="proj-body">The interesting part was a scoring inconsistency. Legitimate <span class="m">GET /api/products</span> requests were being flagged as anomalous because the training data assumed all requests had ~200-byte payloads — but real GET requests carry zero payload. Fixing the synthetic data to use <strong>method-dependent payload distributions</strong> dropped false positives to 1%. A second bug surfaced when the router AND-ed two independent ML signals (<span class="m">is_anomalous</span> and <span class="m">anomaly_score</span>) that were calibrated differently, causing silent disagreements — fixed by choosing a single authoritative signal.</p>
+
+      <div class="fi">
+        <p class="fi-cap">Detection pipeline — request scoring</p>
+        <div class="fi-row"><span class="fi-name">request_rate</span><span class="fi-track"><i class="fi-fill" style="width:100%;transition-delay:0ms"></i></span><span class="fi-val">primary</span></div>
+        <div class="fi-row"><span class="fi-name">payload_size</span><span class="fi-track"><i class="fi-fill" style="width:70%;transition-delay:60ms"></i></span><span class="fi-val">strong</span></div>
+        <div class="fi-row"><span class="fi-name">endpoint</span><span class="fi-track"><i class="fi-fill" style="width:55%;transition-delay:120ms"></i></span><span class="fi-val">encoded</span></div>
+        <div class="fi-row"><span class="fi-name">method</span><span class="fi-track"><i class="fi-fill" style="width:30%;transition-delay:180ms"></i></span><span class="fi-val">binary</span></div>
+      </div>
+
       <div class="caveat">
-        <span class="caveat-lab">Known limitation</span>
-        <p>Every categorical feature was dropped to avoid encoding work — including Neighborhood, usually a top-five predictor here. The score has a hard ceiling until they come back in through a ColumnTransformer.</p>
+        <span class="caveat-lab">Scoped tradeoff</span>
+        <p>Detection includes a structural safety-net alongside the ML signal — endpoints outside a known-safe whitelist get a forced minimum score, because pure rate-based ML was inconsistent at extreme values. This is a deliberate hybrid (defense-in-depth), not purely signature-free in the strictest sense.</p>
       </div>
-      <div class="tags"><span class="tag">scikit-learn</span><span class="tag">pandas</span><span class="tag">seaborn</span></div>
-      <div class="proj-links"><a class="proj-link" href="https://github.com/surajgoeswithds/kaggle-machine-learning" target="_blank" rel="noopener">Repository →</a></div>
+      <div class="tags"><span class="tag">Isolation Forest</span><span class="tag">scikit-learn</span><span class="tag">Flask</span><span class="tag">SQLite</span><span class="tag">Gunicorn</span><span class="tag">Render</span></div>
+      <div class="proj-links">
+        <a class="proj-link" href="https://github.com/navyaXdev/Ghost-Guard" target="_blank" rel="noopener">Repository →</a>
+        <a class="proj-link" href="https://ghost-guard-beryl.vercel.app" target="_blank" rel="noopener">Live dashboard →</a>
+      </div>
     </div>
   </article>
 </section>
@@ -486,7 +500,7 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
 <section class="wrap section" id="failures">
   <p class="eyebrow rv">What went wrong</p>
   <h2 class="section-title rv">The bugs that taught me the most</h2>
-  <p class="section-note rv">A model that scores well and a model that works are different things. These are the gaps between them, and how each one closed.</p>
+  <p class="section-note rv">A model that scores well and a model that works are different things. From data leakage in phishing detection to a security system that flagged itself as an attack — these are the gaps, and how each one closed.</p>
 
   <div class="fails">
     <div class="fail rv">
@@ -508,6 +522,18 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
     <div class="fail rv">
       <div class="fail-head"><span class="fail-arrow">restated ≠ answered</span><h3 class="fail-name">Retrieval that was right and useless</h3></div>
       <p class="fail-body">Vector search correctly found the intro to "selecting data" — a 2-second, six-word fragment. With only that in context, the model could restate the topic but not explain it. The retrieval wasn't wrong; the chunk was too small to be useful. Fixed by expanding each hit into a centred window of neighbouring segments, with explicit boundary clamping so a match near row 0 doesn't wrap around and pull chunks from the end of the video.</p>
+    </div>
+    <div class="fail rv">
+      <div class="fail-head"><span class="fail-arrow">59 → 42 score</span><h3 class="fail-name">Training data that didn't match real traffic</h3></div>
+      <p class="fail-body">Ghost Guard's Isolation Forest was flagging legitimate <span class="m">GET /api/products</span> requests as anomalous (score 59, threshold 45). The synthetic training data assumed all requests had ~200-byte payloads, but real GET requests carry zero payload — a 4-standard-deviation gap the model correctly treated as unusual. Fixed by making payload generation method-dependent: GET payloads ~0, POST ~200. False-positive rate dropped to 1% on a 200-sample retest.</p>
+    </div>
+    <div class="fail rv">
+      <div class="fail-head"><span class="fail-arrow">49 ≥ 45 but "normal"</span><h3 class="fail-name">Two ML signals that silently disagreed</h3></div>
+      <p class="fail-body">The router AND-ed two independent outputs from Isolation Forest — <span class="m">anomaly_score</span> (a manually scaled 0–100 number) and <span class="m">is_anomalous</span> (the model's own internal binary). Score was 49 (above the 45 threshold), but <span class="m">is_anomalous</span> returned False because the model's internal cutoff is calibrated differently. The result: requests that should have been honeypot-routed slipped through as normal. Fixed by using a single authoritative signal — score only.</p>
+    </div>
+    <div class="fail rv">
+      <div class="fail-head"><span class="fail-arrow">self → honeypot</span><h3 class="fail-name">A dashboard that flagged itself as an attack</h3></div>
+      <p class="fail-body">Ghost Guard's own dashboard endpoints (<span class="m">/events</span>, <span class="m">/status</span>, <span class="m">/honeypot-log</span>) were being scored by the middleware and routed to honeypot — because their paths weren't in the known-safe whitelist. The threat level showed "HIGH" with zero real attacks, purely from the dashboard polling itself. Fixed by adding an <span class="m">EXCLUDED_PATHS</span> list in the middleware that skips internal endpoints entirely.</p>
     </div>
   </div>
 </section>
@@ -568,15 +594,19 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
     </div>
     <div class="sg">
       <div class="sg-lab">ML + deep learning</div>
-      <div class="chips"><span class="chip">scikit-learn</span><span class="chip">RandomForest</span><span class="chip">Pipelines</span><span class="chip">ColumnTransformer</span><span class="chip">TensorFlow</span><span class="chip">Keras</span><span class="chip">RAG</span><span class="chip">embeddings</span></div>
+      <div class="chips"><span class="chip">scikit-learn</span><span class="chip">RandomForest</span><span class="chip">Isolation Forest</span><span class="chip">anomaly detection</span><span class="chip">Pipelines</span><span class="chip">ColumnTransformer</span><span class="chip">TensorFlow</span><span class="chip">Keras</span><span class="chip">RAG</span><span class="chip">embeddings</span></div>
+    </div>
+    <div class="sg">
+      <div class="sg-lab">Cybersecurity</div>
+      <div class="chips"><span class="chip">honeypot design</span><span class="chip">behavioral detection</span><span class="chip">AES-256-GCM</span><span class="chip">PBKDF2</span><span class="chip">Web Crypto API</span><span class="chip">phishing detection</span><span class="chip">threat scoring</span></div>
     </div>
     <div class="sg">
       <div class="sg-lab">Serving + deployment</div>
-      <div class="chips"><span class="chip">Flask</span><span class="chip">REST APIs</span><span class="chip">Gunicorn</span><span class="chip">Joblib</span><span class="chip">Ollama</span><span class="chip">Streamlit</span><span class="chip">Render</span><span class="chip">Vercel</span></div>
+      <div class="chips"><span class="chip">Flask</span><span class="chip">REST APIs</span><span class="chip">CORS</span><span class="chip">Gunicorn</span><span class="chip">Joblib</span><span class="chip">Ollama</span><span class="chip">Streamlit</span><span class="chip">Render</span><span class="chip">Vercel</span></div>
     </div>
     <div class="sg">
       <div class="sg-lab">Tooling</div>
-      <div class="chips"><span class="chip">Git</span><span class="chip">Colab</span><span class="chip">Jupyter</span><span class="chip">faster-whisper</span><span class="chip">ffmpeg</span><span class="chip">Matplotlib</span><span class="chip">Seaborn</span></div>
+      <div class="chips"><span class="chip">Git</span><span class="chip">GitHub</span><span class="chip">Colab</span><span class="chip">Jupyter</span><span class="chip">faster-whisper</span><span class="chip">ffmpeg</span><span class="chip">Matplotlib</span><span class="chip">Seaborn</span></div>
     </div>
   </div>
 </section>
@@ -614,7 +644,7 @@ footer{padding:40px 0 60px;border-top:1px solid var(--line-soft);font-family:var
 (function(){
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var items = ['0.937 <b>CV recall</b>','97.68% <b>MNIST test</b>','0.15366 <b>RMSLE</b>','476K <b>URLs trained</b>','AES-256 <b>GCM</b>','1,000 <b>books scraped</b>','17 <b>IPL seasons</b>','0.73444 <b>Titanic</b>','6,682 <b>chunks embedded</b>','4hr <b>video RAG</b>'];
+  var items = ['0.937 <b>CV recall</b>','97.68% <b>MNIST test</b>','1% <b>false-positive rate</b>','476K <b>URLs trained</b>','AES-256 <b>GCM</b>','24/24 <b>attacks contained</b>','17 <b>IPL seasons</b>','0.73444 <b>Titanic</b>','6,682 <b>chunks embedded</b>','4hr <b>video RAG</b>'];
   var html = items.map(function(i){return '<span>'+i+'</span>';}).join('');
   document.getElementById('marq').innerHTML = html + html;
 
